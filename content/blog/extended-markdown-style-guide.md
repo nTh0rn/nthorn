@@ -12,8 +12,8 @@ This blog's markdown is powered by [Markdoc](https://markdoc.dev/). In addition 
 
 You can embed YouTube videos in your blog posts.
 
-{% youtube url="https://www.youtube-nocookie.com/embed/StTqXEQ2l-Y" label="Everything is awesome - Lego movie song" /%}
-
+{% youtube url="https://www.youtube-nocookie.com/embed/StTqXEQ2l-Y?rel=0&controls=0&showinfo=0&autoplay=1&loop=1" label=""/%}
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/StTqXEQ2l-Y?rel=0&controls=0&showinfo=0&autoplay=1&loop=1" frameborder="0" allowfullscreen></iframe>
 ## Tweet
 
 You can embed tweets in your blog posts.

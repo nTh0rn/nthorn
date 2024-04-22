@@ -1,7 +1,8 @@
 ---
 external: false
 title: "Maze Generation and Pathfinding (C++)"
-description: "You can author content using the familiar markdown syntax you already know. All basic markdown syntax is supported."
+description: "A maze generator and flood-fill pathfinder written and visualized in C++"
+tags: ["C++", "Maze generation", "maze", "Flood-fill", "A*", "Algorithm", "Pathfinding", "Recursive", "Backtracking"]
 date: 2024-04-21
 ---
 #### Recursive Backtracking - 1 Depth
