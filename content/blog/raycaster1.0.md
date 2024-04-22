@@ -8,7 +8,7 @@ tags: ["Raycaster", "C++", "ascii graphics", "ascii", "terminal", "retro", "anal
 #### Raycaster 1.0 demo
 ![idkman](/videos/raycaster1.0/walking_newest.webp)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pictured above is an early version of my ascii-based raycaster for my upcoming ascii-graphics analog horror game (see the post I made about the maze generation [here](nthorn.com/blogs/mazegen)).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pictured above is an early version of my ascii-based raycaster for my upcoming ascii-graphics analog horror game (see the post I made about the maze generation [here](https://nthorn.com/blogs/mazegen)).
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This project has been one of my most exhausting yet, as this project has been my foray into C++.
 
