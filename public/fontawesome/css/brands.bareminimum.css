@@ -50,3 +50,9 @@
 .fa-twitter-square:before {
   content: "\f081";
 }
+
+.fa-mail-bulk::before {
+  content: "\f674"; }
+
+  .fa-mail-reply::before {
+    content: "\f3e5"; }
