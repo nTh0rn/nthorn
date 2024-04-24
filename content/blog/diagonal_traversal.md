@@ -3,8 +3,8 @@ external: false
 draft: false
 title: "A Unique Approach to Diagonal Matrix Traversal (Python)"
 description: "An algorithm to traverse across a square matrix diagonally."
-date: 2024-04-22
-tags: ["Matrix", "Linear Algebra", "Traversal", "Diagonal"]
+date: 2024-04-24
+tags: ["Matrix", "Linear Algebra", "Traversal", "Diagonal", "Transformation"]
 ---
 ```
 Pre-diagonal string: "123456789"
@@ -14,11 +14,11 @@ Pre-diagonal string: "123456789"
 
 Post-diagonal string: "142753869"
 ```
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The goal of this project is to traverse a matrix diagonally while wrapping and storing the contents of each cell to a string. To understand why exactly someone might want to do this, read up on the random-test I developed, [The FLS Test](Link_coming_soon), for my [HRNG research](https://arxiv.org/abs/2404.09395).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The goal of this project is to traverse a matrix diagonally while wrapping and storing the contents of each cell to a string. Be sure to checkout the full code on [Github](https://github.com/nTh0rn/diagonal_wrapping_traversal). To understand why exactly someone might want to do this, read up on the random-test I developed, [The FLS Test](/blog/fls_test), for my [HRNG research](https://arxiv.org/abs/2404.09395).
 
 So the tasks are relatively simple:
 1. [Convert the string to a matrix](#convert-a-string-to-a-matrix)
-2. Traverse the matrix diagonally **<- The Fun Part!**
+2. [Traverse the matrix diagonally](#traverse-the-matrix-diagonally) **<- The Fun Part!**
 3. [Output the diagonal path as a string](#output-the-diagonal-path-as-a-string.)
 
 ## Convert a String to a Matrix

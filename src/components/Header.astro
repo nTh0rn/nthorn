@@ -1,16 +1,21 @@
 ---
 import HeaderLink from "./HeaderLink.astro";
 import DarkModeToggle from "./DarkModeToggle.astro";
+import Highlights from "../components/Highlights.astro";
 ---
 
 <header>
+
   <a 
     class="unset absolute z-10 left-[50%] -top-[100rem] translate-x-[-50%] bg-white text-black px-8 py-2 focus:top-[initial]" 
     href="#main"
   >
+  
     Skip to content
   </a>
+  
   <nav>
+  
     <section class="text-text-bold">
       <ul class="unset flex gap-4 [&>li]:p-0">
         <li><HeaderLink href="/">Home</HeaderLink></li>
@@ -24,6 +29,7 @@ import DarkModeToggle from "./DarkModeToggle.astro";
   >
     <DarkModeToggle />
   </div>
+  
 </header>
 <style>
   header {
@@ -32,4 +38,5 @@ import DarkModeToggle from "./DarkModeToggle.astro";
     align-items: center;
     grid-template-columns: minmax(0, 1fr) minmax(0, max-content);
   }
+  
 </style>
