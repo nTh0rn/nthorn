@@ -48,13 +48,13 @@ const formattedDate = new Date(date).toLocaleDateString("en-us", {
   
     <Header />
     
-    <main id="main">
+    <main id="main" style="padding-top:3rem">
     
       <section class="blog-post prose max-w-none prose-newspaper">
-        <h1 class="
+        <center><h1 class="
             m-0 pt-1 mb-[0.375em] 
             after:mt-6 after:content-[''] after:block after:h-[1px] after:w-[100%] after:border-b-[1px] after:border-current  
-        ">{title}</h1>
+        ">{title}</h1></center>
         <time class="block mb-[2em] text-text-muted">{formattedDate}</time>
         <slot name="content" />
       </section>

@@ -15,6 +15,7 @@ import ThemeScript from "./ThemeScript.astro";
 import Favicon from "./Favicon.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import Highlights from "../components/Highlights.astro";
 ---
 
 <!DOCTYPE html>
@@ -29,16 +30,20 @@ import Footer from "../components/Footer.astro";
     <GoogleFont />
     <ThemeScript />
     <FontAwesome />
+    
   </head>
 
   <body
     class="max-w-3xl mx-auto min-h-screen px-6 sm:px-8"
   >
-    <Header />
-    <main id="main">
+  
+    <Header/>
+    
+    <main id="main" style="padding-top:3rem">
       <slot name="main" />
     </main>
     <Footer />
+    
     <style>
       body {
         display: grid;

@@ -1,46 +1,48 @@
 ---
+import HeaderLink from "./HeaderLink.astro";
 ---
 <head>
 <link href="/fontawesome/css/brands.min.css" rel="stylesheet" />
 <link href="/fontawesome/css/fontawesome.min.css" rel="stylesheet" />
 </head>
 <section>
-<div></div>
 
-  <div>
+
+  <div class = "text-[12px]" style=" margin-bottom:0px">
     <center>
-    <p class="mb-1 border-current text-xl">
+    <p class="mb-1 border-current text-[12px]" style="margin-bottom:-1px; margin-top:0px">
       <strong>
-      Hightlights
+      HIGHTLIGHTS
       </strong>
     </p>
   </center>
-	<center>
+	<center style="margin-top:0px; margin-bottom:0px">
+  <hr class="border-t-[1px]" style="width:20%; margin-bottom:-5px"/>
     <div
-      class="border-t-[1px] border-current py-1 flex items-center justify-center gap-1 text-sm" style="width:100%;"
+      class=" border-current py-1 flex items-center justify-center gap-1" style="width:100%; margin-top:0px"
     >
-    <a
+    <HeaderLink
         class="unset ml-4 hover:text-text-link"
         href="/blog/fls_test"
       >
         <i class="fa" aria-hidden="true" title="Research">&#xf0c3;</i>
         <span>The FLS Test (Research)</span>
-      </a>
-      <a
+      </HeaderLink>
+      <HeaderLink
         class="unset ml-4 hover:text-text-link"
         href="/blog/diagonal_traversal"
       >
         <i class="fa" aria-hidden="true" title="GitHub">&#xf121;</i>
         <span>Diagonal Traversal (Python)</span>
-      </a>
+      </HeaderLink>
 
-      <a
+      <HeaderLink
         class="unset ml-4 hover:text-text-link"
         href="/blog/raycaster1.0"
       >
         <i class="fa" aria-hidden="true" title="GitHub">&#xf121;</i>
         <span>Raycaster (C++)</span>
-      </a>
+      </HeaderLink>
       
     </div>
     </center>
@@ -48,3 +50,5 @@
   </div>
  
 </section>
+
+
