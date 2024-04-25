@@ -5,7 +5,7 @@ description: "A maze generator and flood-fill pathfinder written and visualized 
 tags: ["C++", "Maze generation", "maze", "Flood-fill", "A*", "Algorithm", "Pathfinding", "Recursive", "Backtracking"]
 date: 2024-04-21
 ---
-![idkman](/images/mazegen.gif)
+![](/images/mazegen.gif)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The gif above shows my maze generation and pathfinding algorithm I wrote for my upcoming untitled 3D ascii-graphics analog-horror game (Check out the raycaster I wrote for that [here](/blog/raycaster1.0)). This project proved to be a fruitful exploration of recursive algorithms as well as, obviously, maze generation and pathfinding.
 
@@ -14,7 +14,7 @@ date: 2024-04-21
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The trickiest part of this generation is that I wanted the spaces that walls and paths use to be permeable in regard to the same grid. Basically, I wanted a single 2D vector to contain the entire maze, and for it to be feasible for paths and walls to exist on any single coordinate. I wanted this both for the convienence of the single vector that holds the whole map, and because I wanted the walls to be the same thickness as the paths. This caused some difficulties when attemping 2-level-deep recursive backtracking.
 
-![idkman](/images/mazegen2.gif)
+![](/images/mazegen2.gif)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note that if you compare this generation to the one at the start of this article, there are *far* less walls connecting to eachother. That is because this implementation, before placing a pathway, checks a particular direction up to 2 nodes away. This prevents walls from connecting to previously generated walls (for the most-part at least, you can spot some loops in the gif above). This makes a much more traditional maze, but was not ideal for gameplay.
 
