@@ -6,6 +6,7 @@ tags: ["Chess", "Chess engine", "Engine", "Algorithm", "Batch"]
 date: 2021-09-06
 ---
 ![](/images/chessbit/default.png)
+
 [**Checkout the code for this over on GitHub**](https://github.com/nTh0rn/chessbit).
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I made this in Batch with the intent of making it a full chess engine.
