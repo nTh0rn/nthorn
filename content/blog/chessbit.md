@@ -64,6 +64,6 @@ goto switch_%input%
     ...
     goto :eof
 ```
-The bad news, however, is that when using the goto function in Batch, it doesn't just jump straight to the line that has that function. Instead, Batch immediately jumps to the start of the file and reads downward until it finds the function named. That means loops or switch statements kept near the top of your code will run faster than if they were at the bottom of your code.
+The bad news, however, is that when using the goto function in Batch, it doesn't just jump straight to the line that has that function. Instead, Batch immediately jumps to the start of the file and reads downward until it finds the function. That means loops or switch statements kept near the top of your code will run faster than if they were at the bottom of your code.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I hope it is apparent now way I moved away from writing this in Batch. Be sure to check out the code for this over on [GitHub](https://github.com/nTh0rn/chessbit).
