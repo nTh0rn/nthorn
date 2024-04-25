@@ -8,13 +8,9 @@ tags: ["Raycaster", "C++", "ascii graphics", "ascii", "terminal", "retro", "anal
 #### Raycaster 1.0 demo
 ![idkman](/videos/raycaster1.0/walking_newest.webp)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pictured above is an early version of my ascii-based raycaster for my upcoming ascii-graphics analog horror game (see the post I made about the maze generation [here](https://nthorn.com/blog/mazegen)).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pictured above is an early version of my ascii-based raycaster for my upcoming ascii-graphics analog horror game (see the post I made about the maze generation [here](/blog/mazegen)).
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This project has been one of my most exhausting yet, as this project has been my foray into C++.
-
-_**Dear God how I miss literally all other programming languages.**_
-
-Skip to the end to read my thoughts on C++ as a whole, but in the meantime enjoy these videos showing the phases of development.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This project has been one of my most exhausting yet, as this project has been my foray into C++. Skip to the end to read my thoughts on C++ as a whole, but in the meantime enjoy these videos showing the phases of development.
 ---
 #### Current (not great) version of glitching and death
 ![idkman](/videos/raycaster1.0/glitch3_and_death.webp)
@@ -45,13 +41,13 @@ Skip to the end to read my thoughts on C++ as a whole, but in the meantime enjoy
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In the end, the thing that actually made me step away from this form of unicode-based corruption is that I wanted UI elements to exist on the screen. When corrupting the screen buffer, it also corrupted any UI elements, as it was impossible to know how exactly the glitching would offset later after the characters were interpretted by the console. This is why I settled on that earlier shown underwhelming form of glitching.
 
 ## Conclusion
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I honest to god had an easier time programming this in Batch ([Article coming soon!](notdoneyet)). If there is one thing I can say about C++, its that in many respects coding in it was almost exactly like coding in most other languages,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If there is one thing I can say about C++, its that in many respects coding in it was almost exactly like coding in most other languages,
 
 ***EXCEPT WHEN IT WASN'T***.
 
-I have never had a bigger headache than trying to setup my PC environment for C++ compilation. There are many ways to go about it, and when googling for help, you'll more often than not stumble across answers for every other method of compilation than the method you selected on a whim.
+I honestly have never had a bigger headache than trying to setup my PC environment for C++ compilation. There are many ways to go about it, and when googling for help, you'll more often than not stumble across answers for every other method of compilation than the method you selected.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;By far, the worst part of working in C++, has been the online support. The vast majority of the time I went to Google a problem, the top result would be a forum post from over 15 years ago, where the top reply is some $#!1#3@& telling the user that their question has already been answered and that they're stupid for not Googling it. Sometimes, if you're lucky, the top responder will just link to a thread actually answering the question - [but half the time that happens, the links are dead!](https://en.sfml-dev.org/forums/index.php?topic=6781.0)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;By far, the worst part of working in C++, has been the online support. The vast majority of the time I went to Google a problem, the top result would be a forum post from over 15 years ago, where the top reply is someone telling the user that their question has already been answered and that they're stupid for not Googling it. Sometimes, if you're lucky, the top responder will just link to a thread actually answering the question - [but half the time that happens, the links are dead!](https://en.sfml-dev.org/forums/index.php?topic=6781.0)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If you have a careful eye, you may note that that linked article is for SFML, which would imply the use of graphics outside of the native C++ terminal. To my shame, it is true that I am moving away from the native terminal.
 
