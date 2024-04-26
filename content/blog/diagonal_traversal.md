@@ -48,9 +48,9 @@ def string_to_list(input):
 ## Traverse The Matrix Diagonally
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is the trickiest and also the funnest part of this project. Let's examine that matrix from earlier, except let's rewrite it without the fluff.
 ```
-1 3 6
-2 5 8
-4 7 9
+1 2 3
+4 5 6
+7 8 9
 ```
 Now let's rotate this matrix 45 degrees counter-clockwise and show it as a diamond.
 ```
