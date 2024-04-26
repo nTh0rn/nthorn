@@ -259,10 +259,10 @@ y-coords: [0, 1, 0, 2, 1, 0, 2, 1, 2]
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is quite possibly the most simple part of this project. We already have 2 lists representing the x and y coordinates of the diagonal path, so we can create our output string by just visiting each coordinate and adding it to a string.
 ```
 # Walk along the matrix using the generated x and y coordinates.
-	final_string = ""
-	for i in range(0, l * l):
-		final_string += matrix[y_coords[i]][x_coords[i]]
-	return final_string
+final_string = ""
+for i in range(0, l * l):
+	final_string += matrix[y_coords[i]][x_coords[i]]
+return final_string
 ```
 Now we can wrap all of the previous code into one function, ```diagonal_conversion(matrix)```, that accepts a matrix. This yields our final results.
 ```
