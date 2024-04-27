@@ -3,8 +3,11 @@ import HeaderLink from "./HeaderLink.astro";
 import DarkModeToggle from "./DarkModeToggle.astro";
 import Highlights from "../components/Highlights.astro";
 ---
+
 <header style="padding-top:1rem">
 <nav><Highlights/></nav>
+
+
 </header>
 
 <header style="padding-top:5rem; font-size:min(vw, 17px))" class="border-b-[1px]" >
@@ -31,13 +34,13 @@ import Highlights from "../components/Highlights.astro";
       </ul>
     </section>
   </nav>
+  
   <div
     class="justify-self-end flex items-center content-center text-text-bold"
   >
-    <DarkModeToggle />
+    <DarkModeToggle/>
     
   </div>
-  
 </header>
 <hr class"border-b-[1px]" style="width:100%"/>
 <style>

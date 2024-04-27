@@ -37,6 +37,10 @@ const { nodes, Tag } = Markdoc;
 */
 export const config: Config = {
   tags: {
+    p: {
+      render: "p",
+      children: nodes.document.children,
+    },
     details: {
       render: "details",
       children: nodes.document.children,
