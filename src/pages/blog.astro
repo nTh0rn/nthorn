@@ -22,8 +22,18 @@ const sortedPosts = posts
 
 <PageLayout>
   <PageMeta title={`Blog | ${SITE_TITLE}`} slot="meta" />
+
   <section slot="main">
-  
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+</script>
     <ul>
       {
         sortedPosts.map((post) => {
