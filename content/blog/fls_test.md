@@ -114,6 +114,8 @@ $$ {\scriptsize \textrm{Figure 11. Number of lines detected in } 10^7 \textrm{ r
 &nbsp;
 {% /table %}
 $$ {\scriptsize \textrm{Table 1. The lines found divided by the bitstream length and multiplied by the detect length.}} $$
+
+
 ![](/images/fls_test/table1.png)
 
 
