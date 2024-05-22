@@ -6,28 +6,60 @@ tags: ["Raycaster", "Challenge", "Engine", "Algorithm", "Batch", ""]
 date: 2024-01-17
 draft: true
 ---
+
+# Table of Contents
+1. [What is a Raycaster?](#1.-the-fractional-line-symmetry-test)
+2. [Intro](#2.-visualization)
+3. [Line Counting](#3.-line-counting)\
+3.1 &nbsp;[Horizontal Line Counting](#3.1-horizontal-line-counting)\
+3.2 &nbsp;[Vertical Line Counting](#3.2-vertical-line-counting)
+4. [Empirical Proof for Line Count Estimation](#4.-empirical-proof-for-line-count-estimation)
+
+
 {% table %}
- * ![test](/images/batch_raycaster/raycast_visualized.gif) {% align="center" %}
-
-test
+ * ![](/images/batch_raycaster/batch_raycaster_walking.gif) {% align="center" %}
 {% /table %}
-[**Checkout the code for this over on GitHub**](https://github.com/nTh0rn/chessbit).
+[**Checkout the code for this over on GitHub**](https://github.com/nTh0rn/batch-raycaster).
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I made this in Batch with the intent of making it a full chess engine.
-Rather quickly, I realized that Batch was not at all powerful enough
-to run the computations needed to calculate future moves. This is as
-far as I got before I moved making this project into another language.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pictured above is my Raycaster that I built in Batch. This project had many challenges, most notably, the
+inability to use floating point numbers or basic trigonmetric functions. This meant I had to get creative in regard to the actual casting of the rays, as well
+as the storage of the map.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In it's current version, it only sees whether or not the king is
-checked only if the piece checking the king is on a lower row, or if
-its on the same row, it'll only detect the check if its to the right
-of the king. I don't plan on returning to this project and fixing this.
+## Map
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The first thing I had to do was figure out some way to store the map. This was accomplished using dynamic variable naming, which is the Batch equivilent to arrays.
+First the map is stored in a text file as shown.
+{% table %}
+ * ![](/images/batch_raycaster/room.txt.png) {% align="center" %}
+{% /table %}
+Note the hightlighted **P**. This denotes where the player is in the map. You may also note the dots used instead of blank spaces. Batch is basically incapable of comprehending blank spaces in strings, so some filler character must be used instead. This map is 10x10, but the raycaster can support larger maps.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The map is then read line by line, and character by character. Each character is then assigned to its appropriate coordinate, saving the player's coordinates seperately.
+```batch
+set mapx%x%y%y%=!char!
+if "!char!"=="P" (
+	set pcord=x%x%y%y%
+	set /a px=!x!
+	set /a py=!y!
+)
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;One issue though, how do we navigate within cells on the map if we cannot use floating point numbers? The answer is to scale the map up. The higher the scale, the more accurate the raycasting - but also the longer it takes to calculate!
+
+## Scaling
+{% table %}
+ * ![](/images/batch_raycaster/raycaster_scale.png) {% align="center" %}
+{% /table %}
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scaling is very simple. The coordinate system used is not actually 10x10 from the map. Instead, every x and y coordinate is scaled by some number, 500 for example, meaning your grid is actually 5000x5000, with a different cell every 500 units. I usually go overboard and use 500, but anywhere between 150-300 can provide suffecient visual fidelity while also rendering faster.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When working on a scaled grid, it allows you to more precisely calculate the distance of the ray
 # How to use
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To move, type the coordinates of the piece you want to move and where
 you want it to move to. For example:
 ```e2e4```
 
-![](/images/batch_raycaster/raycast_visualized.gif)
+{% table %}
+ * ![](/images/batch_raycaster/raycast_visualized.gif) {% align="center" %}
+{% /table %}
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Upon opening, whoever's move it is is determined by who actually moves first.
 This was done to avoid additional fen-parsing.
