@@ -1,7 +1,7 @@
 ---
 external: false
 title: "Integer-only Raycaster (Batch)"
-description: "A raycaster I wrote in Batch doesn't use any trigonometric function or non-integers."
+description: "A raycaster I wrote in Batch doesn't use any trigonometric functions or non-integers."
 tags: ["Raycaster", "Challenge", "Engine", "Algorithm", "Batch", ""]
 date: 2024-05-22
 draft: true
@@ -15,7 +15,15 @@ draft: true
 2.1 &nbsp;[Scaling](#)
 3. [The Screen](#)\
 3.1 &nbsp;[Vertical Columns](#)
-4. [Empirical Proof for Line Count Estimation](#)
+4. [Raycasting](#) {% mark %}<--The fun part!{% /mark %} \
+4.1 &nbsp;[Angle Calculation](#)\
+4.2 &nbsp;[Wall Hit Detection](#)\
+4.3 &nbsp;[Distance Calculation](#)\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.3.1 &nbsp;[Projection Calculation](#)\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.3.2 &nbsp;[Center FOV Vector Calculation](#)\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.3.3 &nbsp;[Dot Product Calculation](#)
+5. [Conclusion](#)
+
 
 # 1. Intro
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This article explains the solutions I used in the creation of my Batch raycaster.
@@ -38,7 +46,7 @@ to code in, and always yields interesting solutions to what are otherwise trivia
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Please check out [Lode Vandevenne's fantastic article on raycasting](https://lodev.org/cgtutor/raycasting.html) for a full explanation of floating point raycasting. My article focusses on explaining the integer-only solutions to raycasting, and will not recover the basics beyond unique solutions.
 
 
-## The Map
+# 2. The Map
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The first thing I had to do was figure out some way to store the map. This was accomplished using dynamic variable naming, which is the Batch equivilent to arrays.
 First the map is stored in a text file as shown.
 {% table %}
@@ -57,7 +65,7 @@ if "!char!"=="P" (
 ```
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;One issue though, how do we navigate within cells on the map if we cannot use floating point numbers? The answer is to scale the map up. The higher the scale, the more accurate the raycasting - but also the longer it takes to calculate!
 
-## Scaling
+## 2.1 Scaling
 {% table %}
  * ![](/images/batch_raycaster/raycaster_scale.png) {% align="center" %}
 {% /table %}
@@ -66,10 +74,39 @@ if "!char!"=="P" (
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether or not you'll collided with a cell is done by taking the current scaled coordinates and dividing them by the scale amount. The result will be the nearest rounded down integer, which can then be checked using the dynamic map variables for either a wall or blank space.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;What happens if a wall is detected is talked about in [Calculating Distance](#calculating-distance).
+# 3. The Screen
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The coordinates for the screen are generated using dynamic variable naming.
+```batch
+for /l %%y in (1, 1, !height!) do (
+	for /l %%x in (1, 1, !width!) do (
+		set x%%xy%%y=·
+	)
+)
+```
+where `height=30` and `width=45`. As mentioned previously, a filler whitespace is used as Batch cannot easily process whitespace in strings.
 
-## Vertical columns
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Traditionally, you would generate the vertical columns on the fly in a raycaster. I found this to be a bit too much out of the scope of this project, especially since I wanted special characters are the top and bottom of walls. So instead, I use a set of variables that represent all possible vertical columns, stored horizontally as a string.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The screen can then be printed by iterating through these variables as shown.
+```batch
+::Print the screen from the x and y coordinate variables
+:print_screen
+	set screen=
+::  Used to replace the filler whitespace with true whitespace
+	set "temp_whitespace=·"
+	set "real_whitespace= "
+	for /l %%y in (1, 1, !height!) do (
+		for /l %%x in (1, 1, !width!) do (
+			set screen=!screen!!x%%xy%%y!!x%%xy%%y!
+		)
+::      Print the screen row and replace the filler whitespace.
+		echo: !screen:%temp_whitespace%=%real_whitespace%!
+		set screen=
+
+	)
+	goto :eof
+```
+
+## 3.1 Vertical columns
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Traditionally, you would generate the vertical columns on the fly in a raycaster. While that is undoubtedly the most dynamic solution, Batch runs the fastest when you go ahead and do as much of the work that you can for it. So instead, I use a set of variables that represent all possible vertical columns, stored horizontally as a string.
 
 ```batch
 set d33=A···············‾··············B
@@ -108,52 +145,160 @@ set d10=A···—######################—···B
 ```
 The `A` and `B` at the start and end of the line assist with whitespace later on in the code (as mentioned earlier, Batch is horrendous when dealing with whitespace.)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;These vertical columns are written to the screen by iterating through them character by character, and inversely iterating through the screen's coordinates.
+```batch
+::The vertical column for the distance calculated
+set view=!d%distance%!
 
+::Replace wall-characters with the associated character on
+::the map or with the corner-defining character.
+if !corner_hit! LSS 2 (
+    set view=!view:#=%walltype%!
+) else (
+    set view=!view:#=█!
+)
 
+::Iterate through the screen and insert this vertical column
+for /l %%y in (1, 1, !height!) do (
+    set x!screenx!y%%y=!view:~%%y,1!
+)
+```
+where `cornerhit` is a variable storing whether or not the current ray hit a corner, and `walltype` is the character that represents the wall that was hit on the map.
+
+# 4. Raycasting
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is the trickiest part of this project. Our main problem is that we cannot use cosine or sine to calculate the x and y change of our ray's movement vector as it imminates from the player. One possible solution is an implementation of sine and cosine via their Taylor Series definitions, but this is ultimately too costly of a calculation for each ray, and requires more and more iterations as the angle approaches multiples of 90. Instead, a solution that involves the simple addition and subtraction of the x and y component of the vector is used.
+## 4.1 Angle Calculation
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;First, the input angle is noted. This angle defines the left-most ray to be used. First we divide this value by 45. Since Batch is integer-only, these yields a floored answer. This number denotes what octant the angle is in from 1 to 8. This is similar to quadrants, which are seperated by 90 degrees and number from 1 to 4.
+```batch
+::Define what octant the angle is within
+set /a octant=!angle!/45
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The octant is then re-multiplied by 45, which results in the next-lowest 45 degree multiple relative to the original angle. The original angle then subtracts this number, which yields exactly how far inside the octant from 1-45 degrees the angle is.
+```batch
+set /a oct_angle=!octant!*45
+set /a oct_angle=!angle!-!temp_angle!
+set /a oct_angle=!temp_angle!
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is where things get weird. We have what octant we are in, and how far within it we are. The original angle we had, which could've been anything from 0 to 359, ceases to matter at this point. In fact, any degree-based angles as we know them cease to matter. We are now going to use the `oct_angle` as either an x or y component of our ray's movement vector. Which component it effects and whether it is increasing or decreases is decided by what `octant` the angle is current within. The subsequent ray will then move by subtracting or adding 2 to the `oct_angle`. This process is a bit weird to explain, but it can be easily visualized as shown below.
 {% table %}
  * ![](/images/batch_raycaster/raycast_visualized.gif) {% align="center" %}
 {% /table %}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;As can be seen, the x and y component are defined by the `oct_angle` value, which moves 2 units inbetween every ray. When the x or y component reach -45 or 45, it sticks to that value and swaps to the other component. As can be seen in the distances between the rays, this isn't perfect. The `oct_angle` defines how far in the octant the desired ray is, but it is a measurement of degrees, and cannot be mapped 1-to-1 to either the x and y component independantly.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Upon opening, whoever's move it is is determined by who actually moves first.
-This was done to avoid additional fen-parsing.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;However, if we bound the x and y components to within +45 and -45 units, a rough approximate of the desired angle can be obtained. The offset also equalizes out every 90 degrees, which is perfect for having an FOV of 90. This is why the screen is 45 pixels wide, as a change of 2 units per ray (and there are 45 rays) yields 90 degrees. Every single ray within the FOV will not move perfectly by 2 degrees, but it eventually aligns in the end and yields a close-enough approximation.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Still a pretty cool demo though in my opinion! I might someday write up a full article about the challenges of this project and how I approached legal-move calculation. So for now, I encourage you to look at the code if you're curious!
+## 4.2 Wall Hit Detection
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether or not the current x and y coordinate of the ray, `vx` and `vy`, is checked by unscaling them and examining those floored coordinates against the map. Additionally, corner detection occurs here, where if the ray is 1/8th of the way between the corner of a cell then it draws a filled in line instead of the `walltype`. The code is shown below.
+```batch
+:v_search
+::  Not all code is shown
+    . . . 
+::  Not all code is shown
 
-# Evaluation
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The evaluation only works by using piece-tables, obtained from [here](https://www.chessprogramming.org/Simplified_Evaluation_Function) (The Chess Programming Wiki is a goldmine, I highly recommend it.). Again, I was going to implement an actual chess-engine, and then I wised up.
-![](/images/chessbit/eval.png)
-## A statement on switch-statements and the goto function.
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A lot of what I wanted to do when writing this program was use switch-statements and goto loops. Unfortunately, Batch does not have switch statements. What it does have, however, is a dynamic text system that allows you to imbed variables into variable names.
+::  Define the scaled-down coordiantes to check
+    set /a checkx=!vx!/!scale!
+    set /a checky=!vy!/!scale!
 
-This means the following code:
+::  Corner-checking variables
+    set /a corner_hit=0
+    set /a ccx_low=!vx!-!corner_thresh!
+    set /a ccx_high=!vx!+!corner_thresh!
+    set /a ccy_low=!vy!-!corner_thresh!
+    set /a ccy_high=!vy!+!corner_thresh!
+    set /a ccx_low=!ccx_low!/!scale!
+    set /a ccx_high=!ccx_high!/!scale!
+    set /a ccy_low=!ccy_low!/!scale!
+    set /a ccy_high=!ccy_high!/!scale!
+
+::  Check whether the current vector + or - the corner threshhold is defined
+::  as a different cell and, therefore, near the edges of the cell. This can
+::  only ever be the case for 1 of the x checks and 1 of the y checks, but if
+::  it is the case for both, then the ray must be near a corner. If this occurs
+::  then corner_hit will get added to twice.
+    if not "!mapx%ccx_low%y%checky%!"=="!mapx%checkx%y%checky%!" (
+        set /a corner_hit=!corner_hit!+1
+    )
+    if not "!mapx%ccx_high%y%checky%!"=="!mapx%checkx%y%checky%!" (
+        set /a corner_hit=!corner_hit!+1
+    )
+    if not "!mapx%checkx%y%ccy_low%!"=="!mapx%checkx%y%checky%!" (
+        set /a corner_hit=!corner_hit!+1
+    )
+    if not "!mapx%checkx%y%ccy_high%!"=="!mapx%checkx%y%checky%!" (
+        set /a corner_hit=!corner_hit!+1
+    )
+
+::  Check if the current cell is empty, the player, marked by the map's FOV
+::  marker already, or a wall.
+    if "!mapx%checkx%y%checky%!"=="·" (
+        set mapx%checkx%y%checky%=#
+        goto :v_search
+    ) else if "!mapx%checkx%y%checky%!"=="P" (
+        goto :v_search
+    ) else if "!mapx%checkx%y%checky%!"=="#" (
+        goto :v_search
+    ) else (
+        set walltype=!mapx%checkx%y%checky%!
+        call :draw_line
+    )
+
 ```
-switch(input) {
-    case x:
-        ...
-        break;
-    case y:
-        ...
-        break;
-    case z:
-        ...
-        break;
-}
-```
-In Batch, is written as this:
-```
-goto switch_%input%
 
-:switch_x
-    ...
-    goto :eof
-:switch_y
-    ...
-    goto :eof
-:switch_z
-    ...
-    goto :eof
-```
-The bad news, however, is that when using the goto function in Batch, it doesn't just jump straight to the line that has that function. Instead, Batch immediately jumps to the start of the file and reads downward until it finds the function. That means loops or switch statements kept near the top of your code will run faster than if they were at the bottom of your code.
+## 4.3 Distance Calculation
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculating the distance between two points on the scaled map isn't necessarily too difficult - however we can't use just the unmodified distance. If we do that, we'll be left with a, admittedly sort of cool, but undesirable fish-eye-lense effect. In order to circumvent this, we need to calculate the distance of the wall hits to the normal vector of the center of the player's FOV. I tried illustrating this, but I honestly can't do better than [this fabulous stack overflow answer's illustration](https://gamedev.stackexchange.com/questions/97574/how-can-i-fix-the-fisheye-distortion-in-my-raycast-renderer).
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I hope it is apparent now way I moved away from writing this in Batch. Be sure to check out the code for this over on [GitHub](https://github.com/nTh0rn/chessbit).
+### 4.3.1 Projection Calculation
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I actually stumbled across the answer to this problem the very same day I encountered it while attending my Calculus 2 class. We can calculate our desired distance without using any trigonometric functions or floating point numbers by using [Equation 1](#eq1).
+{% table id="eq1" %}
+&nbsp;
+{% /table %}
+$$ d=\frac{\left|\hat{n}\cdot \hat{v}\right|}{\left|\left|\hat{n}\right|\right|} $$
+where *d* is our desired distance, *n* is the vector denoting the center of the player's FOV, and *v* is the ray's vector. Equation 2 is Equation 1 with the mathematical symbols fully expanded.
+{% table id="eq2" %}
+&nbsp;
+{% /table %}
+$$ d=\frac{|n_{x}v_{x}+n_{y}v_{y}|}{\sqrt{n_{x}^{2}+n_{y}^{2}}} $$
+where *n{% sub %}x{% /sub %}*, *n{% sub %}y{% /sub %}*, *v{% sub %}x{% /sub %}*, and *v{% sub %}y{% /sub %}* are the *x* and *y* components of their respective vectors. This method is extremely useful because *n* can be any scalar multiple of itself, where its distance does define the scale of the projection.
+
+### 4.3.2 Center FOV Vector Calculation
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We need to find both the vector for the center of the player's FOV, as well as it's distance. To do this, we simply take the x and y component yielded from the method described in 4.X.X at the left-mode angle + 45. These are stored as `nx` and `ny`.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Now we need to find the length of these vectors. Batch does not have a built-in square root function, which is needed to find the hypotenuse of the right triangle created by the x and y components. So we'll use an implementation of the [Babylonian method of square roots](https://blogs.sas.com/content/iml/2016/05/16/babylonian-square-roots.html). This algorithm is ran for 30 iterations, which yields accurate enough results.
+```batch
+:find mid
+::  Not all code is shown
+    . . . 
+::  Not all code is shown
+
+::  Scale n
+    set /a tnx=!nx!*!scale_half!
+	set /a tny=!ny!*!scale_half!
+
+::  Square n
+	set /a tnx=!tnx!*!tnx!
+	set /a tny=!tny!*!tny!
+
+::  Add squared components of n
+	set /a toberooted=!tnx!+!tny!
+
+::  Babylonian square root algorithm.
+	set /a high=2
+	for /l %%x in (1, 1, 30) do (
+		set /a low=!toberooted!/!high!
+		set /a high=!low!+!high!
+		set /a high=!high!/2
+	)
+
+::  Final distance of n
+	set /a nh=!high!
+```
+### 4.3.2 Dot Product Calculation
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+# 5. Conclusion
+
+
+
+
+
