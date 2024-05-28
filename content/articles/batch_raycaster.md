@@ -387,6 +387,6 @@ set column!screenx!=!view!
 # 5. Conclusion
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This project has been incredibly fun. This article was actually originally supposed to be a postmortem of my mostly abandoned Batch Raycaster. That old version of the program could render frames every 10-20 seconds, and also had a number of visual artifacts. Upon beginning the article and dissecting my old code, I found dozens of things that I could optimize. In the end, I'd say this raycaster isn't half bad.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I believe if there's any particular fix that could be made, it'd be my method of generating the x and y components of the ray's vector. The first one that comes to mind is pre-calculating vectors to be used and just accessing them when needed. 180 vectors would be needed though, which is a bit unweildy.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I believe if there's any particular fix that should be made, it'd be my method of generating the x and y components of the ray's vector. The first one that comes to mind is pre-calculating vectors to be used and just accessing them when needed. 180 vectors would be needed though, which is a bit unweildy.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Again, be sure to try out the program for yourself over on [GitHub](https://github.com/nTh0rn/batch-raycaster), as well as my [raycaster made in C++](/articles/raycaster1.0).
