@@ -4,7 +4,7 @@ title: "Integer-only Raycaster (Batch)"
 description: "A raycaster I wrote in Batch doesn't use any trigonometric functions or non-integers."
 tags: ["Raycaster", "Challenge", "Engine", "Algorithm", "Batch", ""]
 date: 2024-05-22
-draft: true
+draft: false
 ---
 
 # Table of Contents
