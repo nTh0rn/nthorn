@@ -209,12 +209,12 @@ set /a vy=!vy!+!move_amt_y!
 &nbsp;
 {% /table %}
 $$ d=\frac{\left|\hat{n}\cdot \hat{v}\right|}{\left|\left|\hat{n}\right|\right|} \ \ \ \ \ (1) $$
-where *d* is our desired distance, *n* is the vector denoting the center of the player's FOV, and *v* is the ray's vector. [Equation 2](#eq2) is [Equation 1](#eq1) with the mathematical symbols fully expanded.
+where $d$ is our desired distance, $n$ is the vector denoting the center of the player's FOV, and $v$ is the ray's vector. [Equation 2](#eq2) is [Equation 1](#eq1) with the mathematical symbols fully expanded.
 {% table id="eq2" %}
 &nbsp;
 {% /table %}
 $$ d=\frac{|n_{x}v_{x}+n_{y}v_{y}|}{\sqrt{n_{x}^{2}+n_{y}^{2}}} \ \ \ \ \ (2) $$
-where *n{% sub %}x{% /sub %}*, *n{% sub %}y{% /sub %}*, *v{% sub %}x{% /sub %}*, and *v{% sub %}y{% /sub %}* are the *x* and *y* components of their respective vectors. This method is extremely useful because *n* can be any scalar multiple of itself, but its distance does define the scale of the projection.
+where $n_x$, $n_y$, $v_x$, $v_y$ are the $x$ and $y$ components of their respective vectors. This method is extremely useful because $n$ can be any scalar multiple of itself, but its distance does define the scale of the projection.
 
 ### 3.3.3 Center FOV Vector Calculation
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We need to find both the vector for the center of the player's FOV as well as it's distance. To do this, we simply take the x and y component yielded from the method described in 4.1. These are stored as `nx` and `ny`.
