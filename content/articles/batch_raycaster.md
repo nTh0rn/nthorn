@@ -75,7 +75,6 @@ set /a octant=!angle!/45
 ```batch
 set /a oct_angle=!octant!*45
 set /a oct_angle=!angle!-!oct_angle!
-set /a oct_angle=!oct_angle!
 ```
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is where things get weird. Any notion of our angle mapping to actual degrees is gone. We are now going to use the `oct_angle` as either an x or y component of our ray's movement vector. Which component it effects and whether it is increasing or decreases is decided by what `octant` the angle is current within. The subsequent ray will then move by subtracting or adding 2 to the `oct_angle`. This process is a bit weird to explain, but it can be easily visualized as shown below.
 {% table %}
