@@ -24,16 +24,8 @@ const sortedPosts = posts
   <PageMeta title={`Articles | ${SITE_TITLE}`} slot="meta" />
 
   <section slot="main">
-    <script>
-    MathJax = {
-        tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']]
-        },
-        svg: {
-            fontCache: 'global'
-        }
-    };
-</script>
+  
+   
     <ul>
       {
         sortedPosts.map((post) => {
