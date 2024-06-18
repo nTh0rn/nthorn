@@ -3,5 +3,5 @@ draft: false
 title: "Diagonal Matrix Traversal (Python)"
 description: "An algorithm to traverse across a square matrix diagonally."
 date: 2024-04-24
-url: /blog/diagonal_traversal
+url: /articles/diagonal_traversal
 ---

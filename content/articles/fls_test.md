@@ -36,7 +36,7 @@ $$ \operatorname{ceil}(\sqrt{14})^{2}=16 \ \ \ \ \ (1) $$
 
 &nbsp;
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This means that *16-14=2* new "nothing bits" must be added to the bitstream, which for the sake of visualization are shown as grey pixels, as seen in [Figure 2](#fig2). Now that the bitstream length is a square number, it can be stacked left to right into a perfect square, as shown in [Figure 3](#fig3).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This means that $16-14=2$ new "nothing bits" must be added to the bitstream, which for the sake of visualization are shown as grey pixels, as seen in [Figure 2](#fig2). Now that the bitstream length is a square number, it can be stacked left to right into a perfect square, as shown in [Figure 3](#fig3).
 {% table id="fig2" %}
 &nbsp;
 {% /table %}
@@ -48,14 +48,14 @@ $$ {\scriptsize \textrm{Figure 2. Bits visualized with "nothing bits" added to t
 ![](/images/fls_test/fig3.png)
 $$ {\scriptsize \textrm{Figure 3. A bitstream stacked into a square image}} $$
 ## 3. Line Counting
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Line counting is the act of counting how many times a *1* or a *0* appears back-to-back a certain number of times in a row. How many times they must appear back-to-back before being considered one full line is called the *detect length*. It’s possible for bitstreams to have fractional lines. If a full line is found that has additional bits added towards the end, the additional bits are added to the total line count as *1/(detect_length)*. Using a different bitstream than what has been used in previous figures, [Figure 4](#fig4) illustrates line searching for zeros with a *detect length* of *2*.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Line counting is the act of counting how many times a $1$ or a $0$ appears back-to-back a certain number of times in a row. How many times they must appear back-to-back before being considered one full line is called the $\text{detect length}$. It’s possible for bitstreams to have fractional lines. If a full line is found that has additional bits added towards the end, the additional bits are added to the total line count as $\frac{1}{ \text{detect length} }$. Using a different bitstream than what has been used in previous figures, [Figure 4](#fig4) illustrates line searching for zeros with a $\text{detect length}$ of $2$.
 {% table id="fig4" %}
 &nbsp;
 {% /table %}
 ![](/images/fls_test/fig4.png)
 $$ {\scriptsize \textrm{Figure 4. How fractional lines are counted}} $$
 ### 3.1 Horizontal Line Counting
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Horizontal line counting is easier than vertical line counting. For horizontal lines, the bitstream does not need to be stacked at any point. It can be read left-to-right linearly and searched for lines as described in [Line Counting](#line-counting). [Figure 5](#fig5) shows the bitstream used in [Figure 2](#fig2) when line searched for zeros with a *detect length* of *2*. The lines found are highlighted in blue. [Figure 6](#fig6) shows this bitstream when stacked and visualized, which demonstrates how the lines can cross the image-borders.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Horizontal line counting is easier than vertical line counting. For horizontal lines, the bitstream does not need to be stacked at any point. It can be read left-to-right linearly and searched for lines as described in [Line Counting](#line-counting). [Figure 5](#fig5) shows the bitstream used in [Figure 2](#fig2) when line searched for zeros with a $\text{detect length}$ of $2$. The lines found are highlighted in blue. [Figure 6](#fig6) shows this bitstream when stacked and visualized, which demonstrates how the lines can cross the image-borders.
 {% table id="fig5" %}
 &nbsp;
 {% /table %}
@@ -67,7 +67,7 @@ $$ {\scriptsize \textrm{Figure 5. Horizontal line counting for zeros with a dete
 ![](/images/fls_test/fig6.png)
 $$ {\scriptsize \textrm{Figure 6. Horizontal line counting when stacked and visualized}} $$
 ### 3.2 Vertical Line Counting
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vertical line counting is more difficult than horizontal line counting, as it requires that the bits are first visualized and stacked as shown previously in [Figure 2](#fig2). After the bits are visualized the resulting 2D image is rotated 90 degrees counterclockwise as shown in [Figure 7](#fig7). From this, the bits are read left-to-right starting at the top left and unstacked into a linear bitstream. This is just the reverse of the visualization process described in [Visualization](#visualization). [Figure 8](#fig8) shows the bitstream after it has been unstacked.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vertical line counting is more difficult than horizontal line counting, as it requires that the bits are first visualized and stacked as shown previously in [Figure 2](#fig2). After the bits are visualized the resulting 2D image is rotated $90$ degrees counterclockwise as shown in [Figure 7](#fig7). From this, the bits are read left-to-right starting at the top left and unstacked into a linear bitstream. This is just the reverse of the visualization process described in [Visualization](#visualization). [Figure 8](#fig8) shows the bitstream after it has been unstacked.
 {% table id="fig7" %}
 &nbsp;
 {% /table %}
@@ -78,7 +78,7 @@ $$ {\scriptsize \textrm{Figure 7. Visualized and stacked bitstream after being r
 {% /table %}
 ![](/images/fls_test/fig8.png)
 $$ {\scriptsize \textrm{Figure 8. The bitstream after being unstacked}} $$
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Now that the bitstream is linear, it can easily be searched for lines using the same method as horizontal lines. [Figure 9](#fig9) shows the bitstream after it has been line searched for zeros with a *detect length* of *2*. The lines found are highlighted in red. Note that a grey "nothing bit" exists in between a line, but it does not stop it from being counted as a line. This bitstream can now be restacked into a square image, and then rotated back 90 degrees clockwise, as shown in [Figure 10](#fig10).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Now that the bitstream is linear, it can easily be searched for lines using the same method as horizontal lines. [Figure 9](#fig9) shows the bitstream after it has been line searched for zeros with a $\text{detect length}$ of $2$. The lines found are highlighted in red. Note that a grey "nothing bit" exists in between a line, but it does not stop it from being counted as a line. This bitstream can now be restacked into a square image, and then rotated back 90 degrees clockwise, as shown in [Figure 10](#fig10).
 {% table id="fig9" %}
 &nbsp;
 {% /table %}
@@ -98,10 +98,10 @@ $$ \textrm{Lines} = \frac{n+1}{(2^{n+1})n} \times \textrm{bitstream length} \ \ 
 
 &nbsp;
 
-where `n` is the line search length and the bitstream length is the number of total bits in the bitstream.
+where $n$ is the line search length and the bitstream length is the number of total bits in the bitstream.
 
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This equation was found by observing patterns in a bitstream of 10⁷ random bits generated using Python’s Random library. [Figure 11](#fig11). shows the number of lines detected for each detect length in these 10⁷ random bits on a base-2 logarithmic scale. By taking the lines found for each detect length, dividing them by the total number of bits in the bitstream, and multiplying them by the detect length, a series labeled *L**ₙ*** is found as shown in [Table 1](#table1).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This equation was found by observing patterns in a bitstream of $10^7$ random bits generated using Python’s Random library. [Figure 11](#fig11). shows the number of lines detected for each detect length in these $10^7$ random bits on a base-2 logarithmic scale. By taking the lines found for each detect length, dividing them by the total number of bits in the bitstream, and multiplying them by the detect length, a series labeled $L_n$ is found as shown in [Table 1](#table1).
 
 {% table id="fig11" %}
 &nbsp;
@@ -119,7 +119,7 @@ $$ {\scriptsize \textrm{Table 1. The lines found divided by the bitstream length
 ![](/images/fls_test/table1.png)
 
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Table 1](#table1) only shows the first 5 items in the series. By taking each item in *L**ₙ*** and dividing it by the previous item, a new series called *L'**ₙ*** is found as shown in [Table 2](#table2). This series shows the percentage change of each item when compared to the previous. This series starts at *n=2* as there is nothing for *L**₁*** to divide by. This series is notable as it can roughly be approximated as simple fractions, as shown in [Table 3](#table3).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Table 1](#table1) only shows the first 5 items in the series. By taking each item in $L_n$ and dividing it by the previous item, a new series called $L' _ n$ is found as shown in [Table 2](#table2). This series shows the percentage change of each item when compared to the previous. This series starts at $n=2$ as there is nothing for $L_1$ to divide by. This series is notable as it can roughly be approximated as simple fractions, as shown in [Table 3](#table3).
 
 
 {% table id="table2" %}
@@ -143,7 +143,7 @@ These fractions, rather notably, are observed to follow the form of [Equation 3]
 {% /table %}
 $$ \frac{n+1}{2n} \ \ \ \ \ (3) $$
 
-Using the percentage change of [Equation 3](#eq3) between the values in *L**ₙ***, the result shown in [Table 4](#table4) is found. Note that *L**₁*** is included despite not having an *L'**₁*** to be multiplied by. This is because given a random bitstream of any size, the number of bits found for a detect length of 1 divided by the bitstream size is always *1/2*.
+Using the percentage change of [Equation 3](#eq3) between the values in $L_n$, the result shown in [Table 4](#table4) is found. Note that $L_1$ is included despite not having an $L_0$ to be multiplied by. This is because given a random bitstream of any size, the number of bits found for a detect length of 1 divided by the bitstream size is always $1/2$.
 
 
 {% table id="table4" %}
@@ -152,39 +152,39 @@ Using the percentage change of [Equation 3](#eq3) between the values in *L**ₙ*
 $$ {\scriptsize \textrm{Table 4. } L_n \textrm{ as expressions of the percentage change between values.}} $$
 ![](/images/fls_test/table4.png)
 
-It is noted that this new definition of *L**ₙ*** defines every item as a multiple of all of the previous items. This when expanded is shown in [Equation 4](#eq4).
+It is noted that this new definition of $L_n$ defines every item as a multiple of all of the previous items. This when expanded is shown in [Equation 4](#eq4).
 
 {% table id="eq4" %}
 &nbsp;
 {% /table %}
 $$ \require{cancel} L_{n}=0.5\cdot\frac{i+1}{2i}\cdot\frac{i+2}{2(i+1)}\cdot\frac{i+3}{2(i+2)}\cdot...\cdot\frac{i+(n-1)}{2\cdot{(i+(n-2))}} \ \ \ \ \ (4) $$
-where *i* is equal to the value of *n* taken from its earliest use in the series, which in this case is *L**₂***, but it will be left as *i* for now. From this, all instances of *(i+x)* in every numerator can be canceled using the next term’s denominator. This means, however, that the first term retains its denominator, and the last term retains its numerator as visible in [Equation 5](#eq5) and [Equation 6](#eq6).
+where $i$ is equal to the value of $n$ taken from its earliest use in the series, which in this case is $L_2$, but it will be left as $i$ for now. From this, all instances of $(i+x)$ in every numerator can be canceled using the next term’s denominator. This means, however, that the first term retains its denominator, and the last term retains its numerator as visible in [Equation 5](#eq5) and [Equation 6](#eq6).
 
 {% table id="eq5" %}
 &nbsp;
 {% /table %}
-$$ \require{cancel} L_{n}=0.5\cdot\frac{\\cancel{i+1}}{2i}\cdot\frac{\\cancel{i+2}}{2(\\cancel{i+1})}\cdot\frac{\\cancel{i+3}}{2\\cancel{(i+2)}}\cdot...\cdot\frac{i+(n-1)}{2\cdot\\cancel{{(i+(n-2))}}} \ \ \ \ \ (5) $$
+$$ L_{n}=0.5\cdot\frac{\require{cancel}\\cancel{i+1}}{2i}\cdot\frac{\require{cancel}\\cancel{i+2}}{2(\require{cancel}\\cancel{i+1})}\cdot\frac{\require{cancel}\\cancel{i+3}}{2\require{cancel}\\cancel{(i+2)}}\cdot...\cdot\frac{i+(n-1)}{2\cdot\require{cancel}\\cancel{{(i+(n-2))}}} \ \ \ \ \ (5) $$
 
 {% table id="eq6" %}
 &nbsp;
 {% /table %}
 $$ L_{n}=0.5\cdot\frac{1}{2i}\cdot\frac{1}{2}\cdot\frac{1}{2}\cdot...\cdot\frac{i+(n-1)}{2}=0.5\cdot\frac{i+(n-1)}{2^{n-1\ }i} \ \ \ \ \ (6) $$
 
-For the next step, the variable *i* can be replaced with its known value of *2* to produce [Equation 7](#eq7).
+For the next step, the variable $i$ can be replaced with its known value of $2$ to produce [Equation 7](#eq7).
 
 {% table id="eq7" %}
 &nbsp;
 {% /table %}
 $$ \frac{0.5\cdot\frac{n+1}{2n}}{n}=\frac{0.5\cdot(n+1)}{2^{n}n}=\frac{n+1}{(2^{n+1})n} \ \ \ \ \ (7) $$
 
-Finally having a general form for *L**ₙ***, an equation to get the probability of lines appearing for any detect length can be found by simply undoing the multiplication of detect length done to create *L**ₙ*** in the first place, as shown in [Equation 8](#eq8).
+Finally having a general form for $L_n$, an equation to get the probability of lines appearing for any detect length can be found by simply undoing the multiplication of detect length done to create $L_n$ in the first place, as shown in [Equation 8](#eq8).
 
 {% table id="eq8" %}
 &nbsp;
 {% /table %}
 $$ L_{n}=0.5\cdot\frac{2+\left(n-1\right)}{2^{n-1}\left(2\right)}=0.5\cdot\frac{n+1}{2n} \ \ \ \ \ (8) $$
 
-This yields the decimal probability of lines being found for any *detect length* of *n*, but needs to be multiplied by the *bitstream length* to determine exactly how many lines are found for any bitstream size. Multiplying the above equation by the *bitstream length* yields [Equation 2](#eq2), as re-iterated below.
+This yields the decimal probability of lines being found for any $\text{detect length}$ of $n$, but needs to be multiplied by the $\text{bitstream length}$ to determine exactly how many lines are found for any bitstream size. Multiplying the above equation by the $\text{bitstream length}$ yields [Equation 2](#eq2), as re-iterated below.
 
 {% table id="eq2" %}
 &nbsp;

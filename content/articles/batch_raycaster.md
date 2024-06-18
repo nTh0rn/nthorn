@@ -17,7 +17,7 @@ draft: false
 3.1 &nbsp;[Angle Calculation](#3.1-angle-calculation)\
 3.2 &nbsp;[Wall Hit Detection](#3.2-wall-hit-detection)\
 3.3 &nbsp;[Distance Calculation](#3.3-distance-calculation)\
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.1 &nbsp;[Movement Calculation](#3.3.1-movement-calculation)\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.1 &nbsp;[Ray Movement Calculation](#3.3.1-movement-calculation)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2 &nbsp;[Projection Calculation](#3.3.2-projection)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3 &nbsp;[Center FOV Vector Calculation](#3.3.3-center-fov-vector-calculation)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.4 &nbsp;[Dot Product Calculation](#3.3.4-dot-product-calculation)
@@ -75,19 +75,18 @@ set /a octant=!angle!/45
 ```batch
 set /a oct_angle=!octant!*45
 set /a oct_angle=!angle!-!oct_angle!
-set /a oct_angle=!oct_angle!
 ```
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is where things get weird. Any notion of our angle mapping to actual degrees is gone. We are now going to use the `oct_angle` as either an x or y component of our ray's movement vector. Which component it effects and whether it is increasing or decreases is decided by what `octant` the angle is current within. The subsequent ray will then move by subtracting or adding 2 to the `oct_angle`. This process is a bit weird to explain, but it can be easily visualized as shown below.
 {% table %}
  * ![](/images/batch_raycaster/raycast_visualized.gif) {% align="center" %}
 {% /table %}
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;As can be seen, the x and y component are defined by the `oct_angle` value, which moves 2 units in between every ray. When the x or y component reach -45 or 45, it sticks to that value and swaps to the other component. This isn't perfect. The `oct_angle` defines how far in the octant the desired ray is in using *degrees*, and cannot be mapped 1-to-1 to either the x and y component of in a Cartesian system.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;As can be seen, the x and y component are defined by the `oct_angle` value, which moves 2 units in between every ray. When the x or y component reach -45 or 45, it sticks to that value and swaps to the other component. This isn't perfect. The `oct_angle` defines how far in the octant the desired ray is in using *degrees*, and cannot be mapped 1-to-1 to either the x and y component of a Cartesian system.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;However, if we bound the x and y components to within +45 and -45 units, a rough approximate of the desired angle can be obtained. The offset also equalizes out every 90 degrees, which is perfect for having an FOV of 90. This is why the screen is 45 pixels wide, as a change of 2 units per ray (and there are 45 rays) yields 90 degrees. Every single ray within the FOV will not move perfectly by 2 *degrees* in terms of its true angle, but it eventually aligns in the end and yields a close-enough approximation.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;However, if we bound the x and y components to within +45 and -45 units, a rough approximate of the desired angle can be obtained. The offset also equalizes out every 90 degrees, which is perfect for having an FOV of 90. This is why the screen is 45 pixels wide, as a change of 2 units per ray yields 90 degrees. Every single ray within the FOV will not move perfectly by 2 *degrees* in terms of its true angle, but it yields a close-enough approximation.
 
 ## 3.2 Wall Hit Detection
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether or not the current x and y coordinate of the ray, `vx` and `vy`, is checked by unscaling them and examining those floored coordinates against the map. Additionally, corner detection occurs here, where if the ray is 1/8th of the way between the corner of a cell then it draws a filled in line instead of the `walltype`. The code is shown below.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether or not the current x and y coordinate of the ray, `vx` and `vy`, are within a wall is checked by unscaling them and examining those floored coordinates against the map. Additionally, corner detection occurs here, where if the ray is 1/8th of the way between the corner of a cell then it draws a filled in line instead of the `walltype`.
 ```batch
 ::The coordinates to check for walls
 set /a checkx=!vx!/!scale!
@@ -139,8 +138,20 @@ if "!mapx%checkx%y%checky%!"=="·" (
 ## 3.3 Distance Calculation
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We don't simply step along the map by the x and y components of the current ray's vector bit-bit-bit. Instead, we use DDA to massively speed up calculation.
 
-### 3.3.1 Movement Calculation
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Movement is calculated using DDA, which works by determining the shortest distance to the next cell in the movement direction. This distance is quickly and easily calculated and traversed in one go, sidestepping the need to move along a single cell bit-by-bit dozens of times if we already know the current cell is empty.
+### 3.3.1 Ray Movement Calculation
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ray movement is calculated using DDA, which works by determining the shortest distance to the next cell in the movement direction. This distance is quickly and easily calculated and traversed in one go, sidestepping the need to move along a single cell bit-by-bit dozens of times if we already know the current cell is empty.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The code follows the form of the algorithm below, where $ h_{x,y} $ are the x and y components of the movement vector. Assume all operations are floored. Flooring is specified and shown where it is vital to the function of the algorithm (like dividing by a number and immediately multiplying the same number)
+
+1. $ \text{frac} _ {x,y}=v_{x,y}-\operatorname{floor}\left(\frac{v_{x,y}}{ \text{scale} }\right)\cdot \text{scale} $
+2. Is $ h_{x,y} < 0 $?
+   * If yes, $ \text{frac} _ {x,y}=\text{scale}-\text{frac} _ {x,y}  $
+3. $ \text{mult} _ {x,y}=\left|\operatorname{floor}\left(\frac{ \text{frac} _ {x,y}}{h_{x,y}}\right)\right|+1 $
+4. Is $\text{mult} _ {x} < \text{mult} _ {y} $?
+   * If yes, $ \text{move} _ {x,y} = \text{mult} _ {x} \cdot h_{x,y} $
+   * If no, $ \text{move} _ {x,y} = \text{mult} _ {y} \cdot h_{x,y} $
+5. $ v_{x,y} = v_{x,y} + \text{move} _ {x,y} $
+
 ```batch
 ::The base vector for this ray, hx and hy
 if "!priority!"=="x" (
@@ -176,33 +187,34 @@ if !mult_y! LSS 0 (
 )
 set /a mult_x+=1
 set /a mult_y+=1
+
+::Whichever direction reaches the edge of the cell first is used
 if !mult_x! LSS !mult_y! (
     set /a move_amt=!mult_x!
 ) else (
     set /a move_amt=!mult_y!
 )
-set /a mult_x=!move_amt!*!hx!
-set /a mult_y=!move_amt!*!hy!
+set /a move_amt_x=!move_amt!*!hx!
+set /a move_amt_y=!move_amt!*!hy!
 
 ::Move the ray to the edge of the cell
-set /a vx=!vx!+!mult_x!
-set /a vy=!vy!+!mult_y!
+set /a vx=!vx!+!move_amt_x!
+set /a vy=!vy!+!move_amt_y!
 ```
-where `hx` and `hy` are the x and y components of the vector
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculating the distance between two points on the scaled map isn't necessarily too difficult - however we can't use just the unmodified distance. If we do that, we'll be left with a fish-eye-lense effect. In order to circumvent this, we need to calculate the distance of the vector parallel to the center of the player's FOV.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculating the distance between two points on the scaled map isn't necessarily too difficult - however we can't use just the unmodified distance. If we do that, we'll be left with a fish-eye-lense effect. In order to circumvent this, we need to calculate the distance of the wall hit to the normal vector of the center of the player's FOV
 
 ### 3.3.2 Projection
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I actually stumbled across the answer to this problem the very same day I encountered it while attending my Calculus 2 class. We can calculate our desired distance without using any trigonometric functions or floating point numbers by using [Equation 1](#eq1).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I actually stumbled across the answer to this problem the very same day I encountered it while attending my Calculus 2 class, as this is equation that determines the shortest distance between a plane and a point that exists off the plane. We can calculate our desired distance without using any trigonometric functions by using [Equation 1](#eq1).
 {% table id="eq1" %}
 &nbsp;
 {% /table %}
-$$ d=\frac{\left|\hat{n}\cdot \hat{v}\right|}{\left|\left|\hat{n}\right|\right|} $$
-where *d* is our desired distance, *n* is the vector denoting the center of the player's FOV, and *v* is the ray's vector. [Equation 2](#eq2) is [Equation 1](#eq1) with the mathematical symbols fully expanded.
+$$ d=\frac{\left|\hat{n}\cdot \hat{v}\right|}{\left|\left|\hat{n}\right|\right|} \ \ \ \ \ (1) $$
+where $d$ is our desired distance, $n$ is the vector denoting the center of the player's FOV, and $v$ is the ray's vector. [Equation 2](#eq2) is [Equation 1](#eq1) with the mathematical symbols fully expanded.
 {% table id="eq2" %}
 &nbsp;
 {% /table %}
-$$ d=\frac{|n_{x}v_{x}+n_{y}v_{y}|}{\sqrt{n_{x}^{2}+n_{y}^{2}}} $$
-where *n{% sub %}x{% /sub %}*, *n{% sub %}y{% /sub %}*, *v{% sub %}x{% /sub %}*, and *v{% sub %}y{% /sub %}* are the *x* and *y* components of their respective vectors. This method is extremely useful because *n* can be any scalar multiple of itself, where its distance does define the scale of the projection.
+$$ d=\frac{|n_{x}v_{x}+n_{y}v_{y}|}{\sqrt{n_{x}^{2}+n_{y}^{2}}} \ \ \ \ \ (2) $$
+where $n_x$, $n_y$, $v_x$, $v_y$ are the $x$ and $y$ components of their respective vectors. This method is extremely useful because $n$ can be any scalar multiple of itself, but its distance does define the scale of the projection.
 
 ### 3.3.3 Center FOV Vector Calculation
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We need to find both the vector for the center of the player's FOV as well as it's distance. To do this, we simply take the x and y component yielded from the method described in 4.1. These are stored as `nx` and `ny`.
