@@ -31,7 +31,9 @@ draft: false
 5. [Conclusion](#5.-conclusion)
 
 # 1. Intro
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This article explores the solutions I used in the creation of a Raycaster in Batch (.bat). Batch is, frankly, an awful and inefficient language. However, it can be incredibly fun to code in, and always yields interesting solutions to what are otherwise trivial problems in most languages.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This article explores the solutions I used in the creation of a retro-style 3D raycaster in Batch (Windows .bat file type). Batch is, frankly, an awful and inefficient language. However, it can be incredibly fun to code in, and always yields interesting solutions to what are otherwise trivial problems in most languages.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The biggest hurdle with Batch is its very slow execution time and lack of floating point arithmetic. The solutions used for optimization and avoiding floating point arithmetic (notably the avoidance of traditional trigonometry) are explored in this article.
 
 ## 1.1 Demo / Source Code
 [Source code on GitHub](https://github.com/nTh0rn/batch-raycaster)
@@ -40,11 +42,11 @@ draft: false
 {% /table %}
 
 ## 1.2 What is Raycasting?
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The basic gist of raycasting is that every single vertical column of the user's screen is assigned to a ray on a 2D top-down representation of the player's map. How far that ray can emanate from the player before hitting a wall corresponds to the length of a line drawn in its vertical column. This means walls that are far away yield small vertical lines, and walls that are close yield large vertical lines.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Raycasting works by assigning every vertical column of the user's screen to a ray on a 2D top-down representation of the player's map, where the rays span the player's FOV. How far a ray can emanate from the player before hitting a wall corresponds to how tall of a line gets drawn in its vertical column. This means walls that are far away yield small vertical lines, and walls that are close yield large vertical lines.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;So raycasting relies on one basic principle: ***Things look smaller when they are farther away***.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Please check out [Lode Vandevenne's fantastic article on raycasting](https://lodev.org/cgtutor/raycasting.html) for a full explanation of floating point raycasting. My article focuses on explaining the integer-only Batch solutions to raycasting, and will not cover the basics aside from unique solutions.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Please check out [Lode Vandevenne's fantastic article on raycasting](https://lodev.org/cgtutor/raycasting.html) for a full explanation of floating point raycasting. My article focuses on explaining the integer-only Batch solutions to raycasting, which are better understood by first knowing how floating point raycasters work.
 
 # 2. The Map
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The first thing I had to do was figure out some way to store the map. This was accomplished using dynamic variable naming, which is the Batch equivalent to arrays.
@@ -61,12 +63,14 @@ Note the highlighted **P**. This denotes where the player is in the map. You may
  * ![](/images/batch_raycaster/raycaster_scale.png) {% align="center" %}
 {% /table %}
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scaling is very simple. The coordinate system used is not actually 10x10 from the map. Instead, every x and y coordinate is scaled by some number, 500 for example, meaning your grid is actually 5000x5000, with a different cell every 500 units. This also makes all calculated distances large enough that any the amount of detail lost in integer rounding is insignificant.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scaling is very simple. The coordinate system used is not actually 10x10 from the map. Instead, every x and y coordinate is scaled by some number, 500 for example, meaning the grid is actually 5000x5000, with a different cell every 500 units. This also makes all calculated distances large enough that any the amount of detail lost in integer rounding is insignificant.
 
 # 3. Raycasting
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is the trickiest part of this project. Our main problem is that we cannot use cosine or sine to calculate the x and y change of our ray's movement vector as it emanates from the player. One possible solution is an implementation of sine and cosine via their Taylor Series definitions, but this is ultimately too costly of a calculation for each ray, and requires more and more iterations as the angle approaches multiples of 90. Instead, a solution that involves the simple addition and subtraction of the x and y component of the vector is used.
 ## 3.1 Angle Calculation
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;First, the input angle is noted. This angle defines the left-most ray to be used. First we divide this value by 45. Since Batch is integer-only, these yields a floored answer. This number denotes what octant the angle is in from 1 to 8. This is similar to quadrants, which are separated by 90 degrees and number from 1 to 4.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;First, the input angle is noted. This angle defines the left-most ray to be used. First we divide this value by 45. Since Batch is integer-only, these yields a floored answer. This number denotes what octant the angle is in from 1 to 8 (technically 0 to 7). This is similar to quadrants, which are separated by 90 degrees and number from 1 to 4.
+![](/images/batch_raycaster/octants_diagram.png)
+[Image Credit: Sohel, Ferdous & Karmakar, Gour & Dooley, Laurence & Bennamoun, Mohammed. (2010). Bezier curve-based generic shape encoder. Image Processing, IET. 4. 92 - 102. 10.1049/iet-ipr.2008.0128.](https://web.archive.org/web/20110304103657id_/http://people.csse.uwa.edu.au/sohel/Papers/IET/paper.pdf)
 ```batch
 ::Define what octant the angle is within
 set /a octant=!angle!/45
